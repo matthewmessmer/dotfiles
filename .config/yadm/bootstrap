@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+
+# VARIABLES/CONSTANTS ##########################################################
+
+# Variables for dotfiles repo.
+git_host="github.com"
+git_user="matthewmessmer"
+git_repo="dotfiles"
+git_url="https://${git_host}/${git_user}/"
+
+# Variables for temporary files/directories.
+temp_file="$(mktemp -u)"
+temp_dir="$(mktemp -d)"
+
+## Colorize output.
+# shellcheck disable=SC2034
+red="\033[91m"
+# shellcheck disable=SC2034
+green="\033[92m"
+# shellcheck disable=SC2034
+blue="\033[94m"
+# shellcheck disable=SC2034
+yellow="\033[93m"
+# shellcheck disable=SC2034
+white="\033[97m"
+# shellcheck disable=SC2034
+no_color="\033[0m"
+
+
+# FUNCTIONS ####################################################################
+
+print_header() {
+    echo -e "${blue}
+       _     _   ___ _ _
+     _| |___| |_|  _|_| |___ ___
+   _| . | . |  _|  _| | | -_|_ -|
+  |_|___|___|_| |_| |_|_|___|___|${yellow}
+  BOOTSTRAP SCRiPT${white}
+
+  ${git_url}${git_repo}${no_color}
+" >&1
+}
+
+print_footer() {
+    echo -e "${blue}
+  Bootstrap of dotfiles completed!${yellow}
+  Log out${blue} and${yellow} login${blue} to apply changes!${white}
+
+  See README for more information;
+  ${git_url}${git_repo}/.github/README.md${no_color}
+" >&1
+}
+
+print_msg() {
+    echo -e "${green}=>${no_color}${white}" "${@}" "${no_color}" >&1
+}
+
+print_error() {
+    echo -e "${red}=> ERROR:${no_color}${white}" "${@}" "${no_color}" >&2
+}
+
+cleanup_tmp() {
+    rm -rf "${temp_file}" "${temp_dir}"
+}
+
+install_pkgs() {
+
+    # Because Git submodule commands cannot operate without a work tree, they must
+    # be run from within $HOME (assuming this is the root of your dotfiles)
+    cd "$HOME"
+
+    print_msg "Install dotfiles submodules"
+    yadm submodule update --recursive --init
+    
+    if ! [[ -s $HOME/.oh-my-zsh/oh-my-zsh.sh ]]; then
+        echo "Installing Oh My Zsh"
+        curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
+    fi
+    
+    system_type=$(uname -s)
+
+    # Operating system identification. For more information, see
+    # https://www.freedesktop.org/software/systemd/man/os-release.html
+    if [ "$system_type" = "Darwin" ]; then
+        # install homebrew if it's missing
+        if ! command -v brew >/dev/null 2>&1; then
+            print_msg "Installing homebrew"
+            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        fi
+
+        if [ -f "$HOME/.Brewfile" ]; then
+            print_msg "Updating homebrew bundle"
+            brew bundle --global
+        fi
+        
+        print_msg "Installing Sauce Code Pro Font"
+        brew tap homebrew/cask-fonts
+        brew install --cask font-sauce-code-pro-nerd-font
+    
+    elif [[ "${OSTYPE}" = linux-gnu* ]]; then
+    
+        # Do nothing.
+        echo ">>>"
+
+    else
+        print_error "Unsupported operating system! Could not install packages..."
+        exit 1
+    fi
+}
+
+cleanup_options() {
+    echo -e "${yellow}
+  Cleanup home directory?${no_color}
+" >&1
+    echo -e "${yellow}  y)${white} Yes. This removes unused dotfiles.${no_color}" >&1
+    echo -e "${yellow}  n)${white} No. Skip this step and leave all existing dotfiles as is.${no_color}" >&1
+    echo
+}
+
+cleanup_home() {
+    # Array for common dotfiles.
+    dotfiles=(".bash_history" ".bash_logout" ".bash_profile" ".bashrc")
+    found=0 # Set to 1 if file found in the for loop.
+    # Find any pre-esisting dotfiles.
+    for file in "${dotfiles[@]}"; do
+        if [ -e "${HOME}/${file}" ]; then
+            found=1; break
+        fi
+    done
+    # If true, offer to cleanup home directory.
+    if [ "${found}" = 1 ]; then
+        cleanup_options
+        while [ -z "${cleanup_option}" ]; do
+            echo -en "${white}  Option${yellow} [y/n]${white}: ${no_color}"
+            read -r opt
+            echo
+            case "${opt}" in
+                [y]|[Y]*) cleanup_option=1 ;;
+                [n]|[N]*) cleanup_option=2 ;;
+                *) echo -e "Invalid option '${opt}'." >&2; cleanup_options ;;
+            esac
+        done
+        if [ "${cleanup_option}" = 1 ]; then
+            print_msg "Cleaning home directory..."
+            # Cleanup user's home directory.
+            for file in "${dotfiles[@]}"; do
+                [ -e "${HOME}/${file}" ] && rm -ri "${HOME:?}/${file}"
+            done
+        fi
+    fi
+}
+
+update_yadm_repo() {
+    print_msg "Updating the yadm repo origin URL..."
+    yadm remote set-url origin "git@${git_host}:${git_user}/${git_repo}.git"
+}
+
+# EXECUTE FUNCTIONS ############################################################
+
+print_header
+install_pkgs
+cleanup_home
+update_yadm_repo
+cleanup_tmp
+print_footer
