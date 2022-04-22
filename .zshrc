@@ -53,3 +53,5 @@ if [[ -a ~/.localrc ]]
 then
   source ~/.localrc
 fi
+
+#compdef _c c
