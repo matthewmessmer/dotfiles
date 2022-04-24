@@ -2,7 +2,7 @@
 
 # Exa/ls alias
 if [ -x "$(command -v exa)" ]; then
-    alias ls="exa -lahF --color-scale --git"
+    alias ls="exa -lahF --color-scale"
 fi
 
 alias reload!='. ~/.zshrc'

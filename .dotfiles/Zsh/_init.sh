@@ -8,7 +8,7 @@
 #-----------------------------------------------------
 # Set variables
 #
-export EDITOR="nano"
+export EDITOR="vim"
 export PROJECTS=~/Sites # Project folder for `c [tab]` function
 
 #-----------------------------------------------------
@@ -20,7 +20,7 @@ export BREW_COMMAND="/opt/homebrew/bin/brew"
 #-----------------------------------------------------
 # Load Oh-My-Zsh
 #
-plugins=(git lando zsh-history-substring-search zsh-syntax-highlighting)
+plugins=(git zsh-history-substring-search zsh-syntax-highlighting)
 COMPLETION_WAITING_DOTS="true"
 export ZSH=$HOME/.oh-my-zsh
 export ZSH_CUSTOM=$DOTFILES/Zsh/custom

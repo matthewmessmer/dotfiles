@@ -1,21 +1,46 @@
 #gitconfig
-
-[branch]
-autosetupmerge = true
-
-[push]
-default = current
+[user]
+	name = Matt Messmer
+	email = m.messmer@claritypartners.com
 
 [core]
+	autocrlf = false
+	safecrlf = false
+	whitespace = blank-at-eol,blank-at-eof,space-before-tab
+	ignorecase = false
 	excludesfile = /Users/mattmessmer/.gitignore_global
 
+[init]
+	defaultBranch = master
+
+[branch]
+	autosetupmerge = true
+
+[push]
+	default = current
+
 [color]
-diff = auto
-branch = auto
-status = auto
+	ui = auto
+	branch = auto
+	diff = auto
+	grep = auto
+	interactive = auto
+	status = auto
 
 [diff]
-renames = true
+	renames = true
+
+[checkout]
+	defaultRemote = origin
+
+[rebase]
+	# Automatically stash before a rebase and unstash afterwards.
+	autoStash = true
+	
+[commit]
+	# Show diff when preparing commit message
+	verbose = true
+	template = ~/.stCommitMsg
 
 [alias]
 m = merge --no-ff
@@ -34,14 +59,19 @@ ll = log -p
 b = branch
 reha = reset --hard
 lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+	# Pull Upstream
+	pu = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master"
+	# Commit Amend Reuse Message HEAD
+	carmh = commit --amend --reuse-message=HEAD
+	# Push Current
+	pc = !"f() { remote=\"${1:-origin}\"; git push -u \"$remote\" $(git rev-parse --abbrev-ref HEAD); }; f"
+	# Push Current Force
+	pcf = !"f() { echo git pc \"$@\" -f; }; f"
+
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	cmd = /usr/local/bin/bbdiff --resume --reverse --wait \"$LOCAL\" \"$REMOTE\"
 	path = 
+
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
-[user]
-	name = Matt Messmer
-	email = m.messmer@claritypartners.com
-[commit]
-	template = /Users/mattmessmer/.stCommitMsg

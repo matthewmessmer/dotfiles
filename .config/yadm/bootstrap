@@ -93,9 +93,10 @@ install_pkgs() {
             brew bundle --global
         fi
         
-        print_msg "Installing Sauce Code Pro Font"
-        brew tap homebrew/cask-fonts
-        brew install --cask font-sauce-code-pro-nerd-font
+        # Set os defaults
+        print_msg "Setting OS default settings. May require admin password."
+        chmod +x .dotfiles/set-os-defaults.sh
+		.dotfiles/set-os-defaults.sh
     
     elif [[ "${OSTYPE}" = linux-gnu* ]]; then
     

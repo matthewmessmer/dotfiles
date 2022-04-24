@@ -46,17 +46,10 @@ The `clone` and `pull` command may result in warnings because of pre-existing do
 $ yadm fetch --all
 $ yadm reset --hard origin/master
 ```
+## Usage
 
-### 4. Set up [System Defaults](https://github.com/matthewmessmer/dotfiles/tree/master/System)
+### Switch PHP Versions
 
-### 5. Set up [Zsh](https://github.com/matthewmessmer/dotfiles/tree/master/Zsh)
-
-### 6. Set up [Git](https://github.com/matthewmessmer/dotfiles/tree/master/Git)
-
-### 7. Set up [Vim](https://github.com/matthewmessmer/dotfiles/tree/master/Vim)
-
-### 8. Other apps
-
-Now go through other sections relevant to you, and set them up one by one.
-
-<br />
+```bash
+brew unlink php && brew link --overwrite --force php@7.4
+```

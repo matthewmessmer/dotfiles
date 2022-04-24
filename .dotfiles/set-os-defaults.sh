@@ -24,6 +24,9 @@ chflags nohidden ~/Library
 # Always open everything in Finder's list view. This is important.
 defaults write com.apple.Finder FXPreferredViewStyle Nlsv
 
+# Allow copying of text in Quick Look.
+defaults write com.apple.finder QLEnableTextSelection -bool TRUE
+
 # Set the Finder prefs for showing a few different volumes on the Desktop.
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
@@ -86,28 +89,6 @@ defaults write -g NSAutomaticCapitalizationEnabled -bool false
 killall Finder
 killall Dock
 
-# Ask the User to Reboot
-sleep 1
-
 echo "Success! All OS X defaults are set."
 echo
 echo "Some changes will not take effect until you reboot your machine."
-
-function reboot() {
-  read -p "Do you want to reboot your machine now (yes/no)? " choice
-  case "$choice" in
-    y | Yes | yes ) echo "Yes"; exit;; # If y | yes, reboot
-    n | No | no) echo "No"; exit;; # If n | no, exit
-    * ) echo "Invalid answer!" && return;;
-  esac
-}
-
-if [[ "Yes" == $(reboot) ]]
-then
-    echo "Rebooting."
-    sudo reboot
-    exit 0
-else
-    echo "No reboot. </3 Exiting..."
-    exit 1
-fi
