@@ -34,8 +34,10 @@ Clone the dotfiles repository using `yadm`.
 
 ```bash
 yadm clone git@github.com:matthewmessmer/dotfiles.git
-yadm decrypt
-yadm perms
+```
+
+```bash
+yadm decrypt && yadm perms
 ```
 
 #### Force Overwrite of Local Dotfiles
