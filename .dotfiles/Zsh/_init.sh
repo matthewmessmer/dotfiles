@@ -38,26 +38,26 @@ for topic_folder ($DOTFILES/*) if [ -d $topic_folder ]; then  fpath=($topic_fold
 
 #-----------------------------------------------------
 # Load scripts $DOTFILES/*/*.zsh
-#
 typeset -U config_files
 config_files=($DOTFILES/*/*.zsh)
 
-# Load the path.zsh files
-for file in ${(M)config_files:#*/path.zsh}
-do
-  source $file
+# 1. Load the path.zsh files first
+for file in ${(M)config_files:#*/path.zsh}; do
+    source "$file"
 done
 
-# Load everything but the path.zsh and completion.zsh files
-for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
-do
-  source $file
+# 2. Load general settings (aliases, keybindings, etc.), explicitly ignoring path/completion files
+for file in $config_files; do
+    # Skip path and completion files explicitly to avoid filter drop errors
+    if [[ "$file" == */path.zsh || "$file" == */completion.zsh ]]; then
+        continue
+    fi
+    source "$file"
 done
 
-# Load every completion.zsh after autocomplete loads
-for file in ${(M)config_files:#*/completion.zsh}
-do
-  source $file
+# 3. Load every completion.zsh file last
+for file in ${(M)config_files:#*/completion.zsh}; do
+    source "$file"
 done
 
 unset config_files
