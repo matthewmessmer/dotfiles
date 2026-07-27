@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# Ensure terminfo module is loaded so keys map properly
+zmodload zsh/terminfo
+
 # =====  zsh-history-substring-search
 bindkey "$terminfo[kcuu1]" history-substring-search-up     # up arrow
 bindkey "$terminfo[kcud1]" history-substring-search-down   # down arrow
