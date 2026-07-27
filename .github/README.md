@@ -15,11 +15,11 @@ Dotfiles repository managed by [**yadm**](https://yadm.io/) (Yet Another Dotfile
 #### Install Fonts
 
 ```bash
-brew tap homebrew/cask-fonts
+brew install --cask font-sauce-code-pro-nerd-font
 ```
 
 ```bash
-brew install --cask font-sauce-code-pro-nerd-font
+brew install eza
 ```
 
 ### 2. Install [yadm](https://yadm.io/)
