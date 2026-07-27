@@ -37,10 +37,23 @@ autoload -Uz compinit
 
 case $SYSTEM in
   Darwin)
-    if [ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' ${ZDOTDIR:-$HOME}/.zcompdump) ]; then
-      compinit;
+    # Locate the actual zcompdump file using a wildcard match
+    ZCOMPDUMP_FILE=( "${ZDOTDIR:-$HOME}"/.zcompdump*(N) )
+    
+    # Check if at least one matching file was found
+    if (( ${#ZCOMPDUMP_FILE} )); then
+        # Grab the first matching file from the array safely
+        TARGET_DUMP="${ZCOMPDUMP_FILE[1]}"
+        
+        # Compare today's day-of-year (%j) with the file's last modified day
+        if [ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' "$TARGET_DUMP") ]; then
+            compinit
+        else
+            compinit -C
+        fi
     else
-      compinit -C;
+        # Rebuild if no file exists yet
+        compinit
     fi
     ;;
   Linux)
