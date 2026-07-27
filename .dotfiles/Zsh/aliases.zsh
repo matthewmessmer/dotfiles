@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-# Exa/ls alias
-if [ -x "$(command -v exa)" ]; then
-    alias ls="exa -lahF --color-scale"
+# Eza/ls alias
+if [ -x "$(command -v eza)" ]; then
+    alias ls="eza -lahF --color-scale"
 fi
 
 alias reload!='. ~/.zshrc'
